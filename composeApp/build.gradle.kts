@@ -1,12 +1,15 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.buildKonfig)
 }
 
 kotlin {
@@ -95,6 +98,21 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "ir.amirroid.bidwriter"
+        }
+    }
+}
+
+buildkonfig {
+    packageName = "ir.amirroid.bidwriter"
+    defaultConfigs {
+        val secretsFile = project.rootProject.file("secrets.properties")
+        check(secretsFile.exists()) { "secrets.properties not found in root project." }
+
+        val properties = Properties().apply {
+            secretsFile.inputStream().use(::load)
+        }
+        properties.forEach { (key, value) ->
+            buildConfigField(FieldSpec.Type.STRING, key.toString(), value.toString())
         }
     }
 }
