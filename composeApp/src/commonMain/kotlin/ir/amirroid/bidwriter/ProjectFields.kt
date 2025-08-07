@@ -12,9 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MultiChoiceSegmentedButtonRow
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,7 +35,9 @@ val languageChoices = listOf(
 )
 
 @Composable
-fun ProjectFields() {
+fun ProjectFields(
+    onConfirm: (String) -> Unit
+) {
     var clientName by rememberSaveable { mutableStateOf("") }
     var language by rememberSaveable { mutableStateOf(languageChoices.first()) }
     var tone by rememberSaveable { mutableStateOf(toneChoices.first()) }
@@ -124,7 +124,22 @@ fun ProjectFields() {
             onClick = { tone = it }
         ) { Text(it) }
         Button(
-            onClick = {},
+            onClick = {
+                onConfirm.invoke(
+                    buildString {
+                        appendLine("1. Client's Name: $clientName")
+                        appendLine("2. Language: $language")
+                        appendLine("3. Tone: $tone")
+                        appendLine("4. Project Description: $projectDescription")
+                        appendLine("5. My Suggestions: $suggestions")
+                        appendLine("6. Portfolio Items: $portfolioItems")
+                        appendLine("7. My Questions: $questions")
+                        appendLine("8. Deadline: $deadline")
+                        appendLine("9. Formatting Instructions: ${formattingInstructions.ifBlank { "(empty)" }}")
+                    }
+                )
+
+            },
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.medium
         ) {

@@ -17,7 +17,7 @@ fun App() {
             color = MaterialTheme.colorScheme.background,
             contentColor = MaterialTheme.colorScheme.onBackground
         ) {
-            ProjectFields()
+            ChatScreen()
         }
     }
 }
