@@ -9,8 +9,11 @@ import com.aallam.openai.api.chat.ChatCompletionRequest
 import com.aallam.openai.api.chat.ChatMessage
 import com.aallam.openai.api.chat.ChatRole
 import com.aallam.openai.api.chat.TextContent
+import com.aallam.openai.api.logging.Logger
 import com.aallam.openai.api.model.ModelId
+import com.aallam.openai.client.LoggingConfig
 import com.aallam.openai.client.OpenAI
+import com.aallam.openai.client.OpenAIHost
 import ir.amirroid.bidwriter.models.Message
 import ir.amirroid.bidwriter.models.Role
 import kotlinx.coroutines.Dispatchers
@@ -28,10 +31,14 @@ class ChatViewModel : ViewModel() {
     var messageText by mutableStateOf("")
 
     private val openAI = OpenAI(
-        token = BuildKonfig.OPENAI_API_KEY
+        token = BuildKonfig.OPENAI_API_KEY,
+        logging = LoggingConfig(logger = Logger.Default),
+        host = OpenAIHost(BuildKonfig.HOST)
     )
-    private val model = ModelId("gpt-3.5-turbo")
+    private val model = ModelId("gpt-4o")
 
+
+    fun clearMessages() = _messages.update { emptyList() }
 
     private fun addMessage(
         role: Role,
@@ -82,7 +89,17 @@ class ChatViewModel : ViewModel() {
                 model = model,
                 messages = listOf(
                     ChatMessage(
-                        ChatRole.User,
+                        role = ChatRole.System,
+                        messageContent = TextContent(prompt)
+                    ),
+                    *_messages.value.map {
+                        ChatMessage(
+                            role = if (it.role == Role.AI) ChatRole.System else ChatRole.User,
+                            messageContent = TextContent(it.content)
+                        )
+                    }.toTypedArray(),
+                    ChatMessage(
+                        role = ChatRole.User,
                         messageContent = TextContent(text)
                     ),
                 )
@@ -97,7 +114,7 @@ class ChatViewModel : ViewModel() {
                 model = model,
                 messages = listOf(
                     ChatMessage(
-                        ChatRole.System,
+                        role = ChatRole.System,
                         messageContent = TextContent(prompt)
                     ),
                     ChatMessage(
