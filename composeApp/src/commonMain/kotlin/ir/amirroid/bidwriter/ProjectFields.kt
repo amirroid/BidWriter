@@ -39,7 +39,6 @@ fun ProjectFields(
     onConfirm: (String) -> Unit
 ) {
     var clientName by rememberSaveable { mutableStateOf("") }
-    var language by rememberSaveable { mutableStateOf(languageChoices.first()) }
     var tone by rememberSaveable { mutableStateOf(toneChoices.first()) }
     var projectDescription by rememberSaveable { mutableStateOf("") }
     var suggestions by rememberSaveable { mutableStateOf("") }
@@ -112,12 +111,6 @@ fun ProjectFields(
             label = { Text("Formatting Instructions") }
         )
         SegmentedButtonPicker(
-            items = languageChoices,
-            selectedItem = language,
-            title = "Language",
-            onClick = { language = it }
-        ) { Text(it) }
-        SegmentedButtonPicker(
             items = toneChoices,
             selectedItem = tone,
             title = "Tone",
@@ -128,14 +121,13 @@ fun ProjectFields(
                 onConfirm.invoke(
                     buildString {
                         appendLine("1. Client's Name: $clientName")
-                        appendLine("2. Language: $language")
-                        appendLine("3. Tone: $tone")
-                        appendLine("4. Project Description: $projectDescription")
-                        appendLine("5. My Suggestions: $suggestions")
-                        appendLine("6. Portfolio Items: $portfolioItems")
-                        appendLine("7. My Questions: $questions")
-                        appendLine("8. Deadline: $deadline")
-                        appendLine("9. Formatting Instructions: ${formattingInstructions.ifBlank { "(empty)" }}")
+                        appendLine("2. Tone: $tone")
+                        appendLine("3. Project Description: $projectDescription")
+                        appendLine("4. My Suggestions: $suggestions")
+                        appendLine("5. Portfolio Items: $portfolioItems")
+                        appendLine("6. My Questions: $questions")
+                        appendLine("7. Deadline: $deadline")
+                        appendLine("8. Formatting Instructions: ${formattingInstructions.ifBlank { "(empty)" }}")
                     }
                 )
 
